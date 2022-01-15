@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Auteur index{% endblock %}
+
+{% block body %}
+    <nav class="uk-navbar-container" uk-navbar="offset:0;mode:click;">
+        <div class="uk-navbar-left uk-margin-large-left">
+
+            <ul class="uk-navbar-nav">
+                <li><a href="{{path('home')}}">Home</a></li>
+                <li>
+                    <a href="{{path('livre_index')}}">Livres <i class="fa-solid fa-angle-down"></i></a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% for genre in genres%}
+                            <li><a href="#">{{genre.nom}}</a></li>
+                            {% endfor %}
+                            {% if genres|length == 0%}
+                            <li>Pas de genre</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </li>
+                <li><a href="{{path('auteur_index')}}">Auteur</a></li>
+            </ul>
+
+        </div>
+
+        <div class="uk-navbar-center">
+            
+            <ul class="uk-navbar-nav" align="center">
+                <a style="text-decoration : none; color: black" href="{{path('home')}}"><img src="{{asset('assets/img/bookstore.png')}}" width="40px" />
+                <br/><strong>BOOKSTORE</strong></a>
+            </ul>
+        </div>
+
+        
+        <div class="uk-navbar-right uk-margin-large-right">
+
+            <ul class="uk-navbar-nav">
+            <!-- User is connected-->
+            {% if app.user %}
+                <li>
+                    <a href="#">{{ (app.user.email|split("@"))[0] }} <i class="fa-solid fa-angle-down"></i></a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% if app.user.roles[0] == 'ROLE_ADMIN' %}
+                            <li><a href="{{ path('auteur_new') }}"><i class="fa-solid fa-plus-square"></i> Ajouter Auteur</a></li>
+                            <li><a href="{{ path('genre_new') }}"><i class="fa-solid fa-plus-square"></i> Ajouter Genre</a></li>
+                            <li><a href="{{ path('livre_new') }}"><i class="fa-solid fa-plus-square"></i> Ajouter Livre</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('app_logout') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> LogOut</a></li>
+                        </ul>
+                    </div>
+                </li>
+            {% endif %}
+            <!-- User isn't connected-->
+                {% if not app.user %}
+                <li><a href="{{ path('app_login') }}"><span>Sign In</span></a></li>
+                <li><a href="{{ path('app_register') }}"><span class="outline-btn">Sign UP</span></a></li>
+                {% endif %}
+            </ul>
+
+        </div>
+
+    </nav>
+
+
+    <div align="center">
+        <div class="uk-width-2-3 uk-margin-large-top uk-padding uk-card uk-card-default">
+            <h1>Auteur index</h1>
+
+            <table class="uk-table">
+                <thead>
+                    <tr>
+                        <th>Nom_prenom</th>
+                        <th>Sexe</th>
+                        <th>Date_de_naissance</th>
+                        <th>Nationalite</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for auteur in auteurs %}
+                    <tr>
+                        <td>{{ auteur.nomPrenom }}</td>
+                        <td>{{ auteur.sexe }}</td>
+                        <td>{{ auteur.dateDeNaissance ? auteur.dateDeNaissance|date('Y-m-d') : '' }}</td>
+                        <td>{{ auteur.nationalite }}</td>
+                        <td>
+                            <a href="{{ path('auteur_show', {'id': auteur.id}) }}">show</a>
+                            <a href="{{ path('auteur_edit', {'id': auteur.id}) }}">edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% if app.user %}
+{% if app.user.roles[0] == 'ROLE_ADMIN' %}
+
+            <a class="uk-button uk-button-secondary uk-box-shadow-medium uk-box-shadow-hover-large" href="{{ path('auteur_new') }}"><i class="fa-solid fa-plus-square"></i> Create new</a>
+
+        {% endif %}
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
